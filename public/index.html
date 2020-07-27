@@ -55,18 +55,19 @@
       type="submit"
       :disabled="!valid"
       color="success"
-      class="mr-4"
+      class="btn mr-4"
       @click="validate"
     >
-      Validate
+     <span class="btn-span">Validate</span>
+     
     </v-btn>
     
     <v-btn
       color="error"
-      class="mr-4"
+      class="btn mr-4"
       @click="reset"
     >
-      Reset Form
+      <span class="btn-span">Reset Form</span>
     </v-btn>
   </v-form>
 </div>

@@ -10,8 +10,10 @@ html, body {
     /*padding-top: 50px;*/
     /*justify-content: center;*/
     width: 400px;
-    margin: 0 auto;
-    padding-top: 50px;
+    margin: 50px auto 0 auto;
+    padding: 10px 10px 15px 10px;
+    border: 1px solid rgba(0,0,0,.6);
+    border-radius: 3px;
 }
 
 .chat {
@@ -21,19 +23,31 @@ html, body {
 }
 
 .chat-users {
-    width: 300px;
-    border: 1px solid #e0e0e0;
     margin: 0;
+    padding: 0;
+}
+
+.collection-item {
+    color: white;
+}
+
+.btn {
+    margin-top: -10px;
+    color: rgba(0,0,0,.6);
+}
+
+.btn-span {
+    color: rgba(0,0,0,.6);
 }
 
 .actions {
-    border: 1px solid #e0e0e0;
+    border-top: 1px solid #272727;
     height: calc(30vh - 31px);
     padding: 20px;
 }
 
 .chat-messages {
-    border: 1px solid #e0e0e0;
+    border-bottom: 1px solid #272727;
     width: 100%;
     padding: 15px;
     overflow-y: auto;
@@ -46,9 +60,17 @@ html, body {
 .message-content {
     border-radius: 3px;
     padding: 6px 9px;
-    font-size: 14px;
+    font-size: 15px;
     margin-bottom: 10px;
-    max-width: 250px;
+    max-width: 40%;
+    max-height: 100%;
+    background: #272727;
+    color: #ffffff;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    text-align: justify;
 }
 
 .message.owner {
@@ -63,3 +85,13 @@ html, body {
 main {
     padding: 0;
 }
+
+.active {
+    color: #ffffff;
+    background: #26a69a;
+}
+
+.user-span {
+    color: #000;
+}
+

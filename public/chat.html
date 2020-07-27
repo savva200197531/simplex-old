@@ -22,6 +22,7 @@
         class="collection-item"
         v-for="u in users"
         :class="{'active': u.id === user.id}"
+        :key="u.id"
         link
       >
         {{u.name}}
@@ -39,41 +40,42 @@
   </v-app-bar>
   
   <v-main>
-    <v-content style="padding: 0">
-      <div class="chat">
-        <div class="chat-messages" ref="messages">
-          <chat-message
-            v-for="(m, idx) in messages"
-            :message="m"
-            :user="user"
-            :key="idx"
-          ></chat-message>
-        </div>
+    <div class="chat">
+      <div class="chat-messages" ref="messages">
+        <chat-message
+          v-for="(m, idx) in messages"
+          :message="m"
+          :user="user"
+          :key="idx"
+        ></chat-message>
       </div>
-      <div class="actions">
-        <div class="input-field">
-          <input
-            type="text"
-            placeholder="Type your message..."
-            v-model.trim="message"
-            autofocus
-            autocomplete="false"
-            @keydown.enter="sendMessage"
-          >
-        </div>
-        <button
-          class="btn"
-          @click="sendMessage"
-          :disabled="message.length === 0"
-        >Send</button>
-      </div>
-    </v-content>
+    </div>
+    <div class="actions">
+      <v-textarea
+        type=""
+        placeholder="Type your message..."
+        v-model.trim="message"
+        autofocus
+        autocomplete="false"
+        @keydown.enter="sendMessage"
+      >
+      </v-textarea>
+      
+      <v-btn
+        class="btn mr-4"
+        @click="sendMessage"
+        :disabled="message.length === 0"
+        color="success"
+      >
+        <span class="btn-span">Send</span>
+      </v-btn>
+    </div>
   </v-main>
   <v-footer
     color="indigo"
     app
   >
-    <span class="white--text">&copy; {{ new Date().getFullYear() }}</span>
+    <span class="white--text">&copy; Кашин С. И., "Simplex", {{ new Date().getFullYear() }}</span>
   </v-footer>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -113,14 +115,15 @@
           name: this.user.name,
           id: this.user.id
         }
-
-        socket.emit('message:create', message, err => {
-          if (err) {
-            console.error(err)
-          } else {
-            this.message = ''
-          }
-        })
+        if (message.text !== '') {
+          socket.emit('message:create', message, err => {
+            if (err) {
+              console.error(err)
+            } else  {
+              this.message = ''
+            }
+          })
+        }
       },
       initializeConnection() {
         socket.on('users:update', users => {
