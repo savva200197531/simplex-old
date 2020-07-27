@@ -26,6 +26,6 @@ class Users {
   }
 }
 
-module.exports = function() {
+module.exports = function () {
   return new Users()
 }

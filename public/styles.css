@@ -1,22 +1,22 @@
 html, body {
     margin: 0;
     padding: 0;
-    font-family: "Roboto";
+    font-family: "Roboto", sans-serif;
 }
 
 .auth {
-    display: flex;
-    padding-top: 50px;
-    justify-content: center;
-}
-
-.auth .card {
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*padding-top: 50px;*/
+    /*justify-content: center;*/
     width: 400px;
+    margin: 0 auto;
+    padding-top: 50px;
 }
 
 .chat {
     display: flex;
-    height: 70vh;
+    height: calc(70vh - 64px);
     width: 100%;
 }
 
@@ -28,7 +28,7 @@ html, body {
 
 .actions {
     border: 1px solid #e0e0e0;
-    height: 30vh;
+    height: calc(30vh - 31px);
     padding: 20px;
 }
 
@@ -58,4 +58,8 @@ html, body {
 .message.owner .message-content {
     color: #fff;
     background: #26a69a;
+}
+
+main {
+    padding: 0;
 }

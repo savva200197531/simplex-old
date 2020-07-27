@@ -11,7 +11,7 @@ const app = express()
 const server = http.createServer(app)
 const io = socketIO(server)
 
-const message = (name, text, id) => ({name, text, id})
+const message = (name, text, id) => ({ name, text, id })
 
 app.use(express.static(publicPath))
 
@@ -22,7 +22,7 @@ io.on('connection', socket => {
       return callback('Enter valid user data')
     }
 
-    callback({userId: socket.id})
+    callback({ userId: socket.id })
 
     socket.join(user.room)
 
@@ -30,8 +30,8 @@ io.on('connection', socket => {
     users.add(socket.id, user.name, user.room)
 
     io.to(user.room).emit('users:update', users.getByRoom(user.room))
-    socket.emit('message:new', message('Admin', `Welcome, ${user.name}!`))
-    socket.broadcast.to(user.room).emit('message:new', message('Admin', `${user.name} joined.`))
+    socket.emit('message:new', message('Admin', `Welcome, ${ user.name }!`))
+    socket.broadcast.to(user.room).emit('message:new', message('Admin', `${ user.name } joined.`))
   })
 
   socket.on('message:create', (data, callback) => {
@@ -49,12 +49,12 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     const user = users.remove(socket.id)
     if (user) {
-      io.to(user.room).emit('message:new', message('Admin', `${user.name}, left.`))
+      io.to(user.room).emit('message:new', message('Admin', `${ user.name }, left.`))
       io.to(user.room).emit('users:update', users.getByRoom(user.room))
     }
   })
 })
 
 server.listen(port, () => {
-  console.log(`Server has been started on port ${port}...`)
+  console.log(`Server has been started on port ${ port }...`)
 })

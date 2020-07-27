@@ -1,60 +1,165 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <title>NodeJS Chat</title>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <title>Simplex Chat</title>
 </head>
 <body>
-
 <div id="app">
-
-    <div class="chat">
-        <div class="chat-users collection">
-            <a
-                class="collection-item"
-                v-for="u in users"
-                :class="{'active': u.id === user.id}"
-            >
-                {{u.name}}
-            </a>
-        </div>
+  <v-navigation-drawer
+    v-model="drawer"
+    app
+  >
+    <v-list class="chat-users collection" dense>
+      <v-list-item
+        class="collection-item"
+        v-for="u in users"
+        :class="{'active': u.id === user.id}"
+        link
+      >
+        {{u.name}}
+      </v-list-item>
+    </v-list>
+  </v-navigation-drawer>
+  
+  <v-app-bar
+    app
+    color="indigo"
+    dark
+  >
+    <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+    <v-toolbar-title>Simplex Chat</v-toolbar-title>
+  </v-app-bar>
+  
+  <v-main>
+    <v-content style="padding: 0">
+      <div class="chat">
         <div class="chat-messages" ref="messages">
-            <chat-message
-                v-for="(m, idx) in messages"
-                :message="m"
-                :user="user"
-                :key="idx"
-            ></chat-message>
+          <chat-message
+            v-for="(m, idx) in messages"
+            :message="m"
+            :user="user"
+            :key="idx"
+          ></chat-message>
         </div>
-    </div>
-    <div class="actions">
+      </div>
+      <div class="actions">
         <div class="input-field">
-            <input
-                type="text"
-                placeholder="Type your message..."
-                v-model.trim="message"
-                autofocus
-                autocomplete="false"
-                @keydown.enter="sendMessage"
-            >
+          <input
+            type="text"
+            placeholder="Type your message..."
+            v-model.trim="message"
+            autofocus
+            autocomplete="false"
+            @keydown.enter="sendMessage"
+          >
         </div>
         <button
-            class="btn"
-            @click="sendMessage"
-            :disabled="message.length === 0"
+          class="btn"
+          @click="sendMessage"
+          :disabled="message.length === 0"
         >Send</button>
-    </div>
-
+      </div>
+    </v-content>
+  </v-main>
+  <v-footer
+    color="indigo"
+    app
+  >
+    <span class="white--text">&copy; {{ new Date().getFullYear() }}</span>
+  </v-footer>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script src="socket.io/socket.io.js"></script>
-<script src="app.js"></script>
+<script>
+  const socket = io()
+
+  Vue.component('chat-message', {
+    props: [ 'message', 'user' ],
+    template: `
+      <div class="message" :class="{'owner': message.id === user.id}">
+      <div class="message-content z-depth-1">
+        {{ message.name }}: {{ message.text }}
+      </div>
+      </div>
+    `
+  })
+
+  new Vue({
+    el: '#app',
+    vuetify: new Vuetify(),
+    data: {
+      message: '',
+      messages: [],
+      users: [],
+      user: {
+        name: '',
+        room: ''
+      },
+      drawer: null,
+    },
+    methods: {
+      sendMessage() {
+        const message = {
+          text: this.message,
+          name: this.user.name,
+          id: this.user.id
+        }
+
+        socket.emit('message:create', message, err => {
+          if (err) {
+            console.error(err)
+          } else {
+            this.message = ''
+          }
+        })
+      },
+      initializeConnection() {
+        socket.on('users:update', users => {
+          this.users = [ ...users ]
+        })
+
+        socket.on('message:new', message => {
+          this.messages.push(message)
+
+          scrollToBottom(this.$refs.messages)
+        })
+        scrollToBottom(this.$refs.messages)
+      }
+    },
+    created() {
+      const params = window.location.search.split('&')
+      const name = params[0].split('=')[1].replace('+', ' ')
+      const room = params[1].split('=')[1].replace('+', ' ')
+
+      this.user = { name, room }
+    },
+    mounted() {
+      socket.emit('join', this.user, data => {
+        if (typeof data === 'string') {
+          console.error(data)
+        } else {
+          this.user.id = data.userId
+          this.initializeConnection()
+        }
+      })
+    }
+  })
+
+  const scrollToBottom = node => {
+    setTimeout(() => {
+      node.scrollTop = node.scrollHeight
+    })
+  }
+
+</script>
 </body>
 </html>
