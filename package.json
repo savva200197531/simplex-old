@@ -9,7 +9,7 @@
   },
   "main": "index.js",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "materialize-css": "^1.0.0-rc.2",
     "socket.io": "^2.3.0",
     "vuetify": "^2.2.11"
